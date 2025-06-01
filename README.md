@@ -1,122 +1,122 @@
 # Automated Audio Response System
 
-Este sistema permite hacer coincidir consultas de texto con archivos de audio utilizando técnicas de Procesamiento de Lenguaje Natural (NLP).
+This system allows matching text queries with audio files using Natural Language Processing (NLP) techniques.
 
-## Estructura del Proyecto
+## Project Structure
 
-El proyecto ha sido reorganizado en una estructura modular para facilitar el mantenimiento y futuras modificaciones:
+The project has been reorganized into a modular structure to facilitate maintenance and future modifications:
 
 ```
 sistem-audios/
-├── app/                    # Paquete principal de la aplicación
-│   ├── config/             # Configuración de la aplicación
+├── app/                    # Main application package
+│   ├── config/             # Application configuration
 │   │   ├── __init__.py
-│   │   └── settings.py     # Variables de configuración
-│   ├── models/             # Modelos de datos
+│   │   └── settings.py     # Configuration variables
+│   ├── models/             # Data models
 │   │   ├── __init__.py
-│   │   ├── enums.py        # Enumeraciones y tipos
-│   │   └── schemas.py      # Esquemas Pydantic
-│   ├── routes/             # Rutas de la API
+│   │   ├── enums.py        # Enumerations and types
+│   │   └── schemas.py      # Pydantic schemas
+│   ├── routes/             # API routes
 │   │   ├── __init__.py
-│   │   └── api.py          # Endpoints de la API
-│   ├── services/           # Servicios de la aplicación
+│   │   └── api.py          # API endpoints
+│   ├── services/           # Application services
 │   │   ├── __init__.py
-│   │   └── audio_matcher.py # Lógica principal del matcher
+│   │   └── audio_matcher.py # Main matcher logic
 │   ├── __init__.py
-│   └── main.py             # Aplicación FastAPI
-├── audios/                 # Archivos de audio
-├── audio_base.json         # Base de datos de audio
-├── main.py                 # Punto de entrada de la aplicación
-├── requirements.txt        # Dependencias del proyecto
-└── .env                    # Variables de entorno (opcional)
+│   └── main.py             # FastAPI application
+├── audios/                 # Audio files
+├── audio_base.json         # Audio database
+├── main.py                 # Application entry point
+├── requirements.txt        # Project dependencies
+└── .env                    # Environment variables (optional)
 ```
 
-## Instalación
+## Installation
 
-1. Clonar el repositorio
-2. Instalar dependencias:
+1. Clone the repository
+2. Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Ejecución
+## Execution
 
 ```bash
 python main.py
 ```
 
-La API estará disponible en `http://localhost:8000`
+The API will be available at `http://localhost:8000`
 
-## Métodos de Matching
+## Matching Methods
 
-El sistema implementa cuatro métodos diferentes para hacer coincidir consultas de texto con archivos de audio:
+The system implements four different methods for matching text queries with audio files:
 
 ### 1. Individual (`individual`)
 
-Compara la consulta con cada descripción individual de cada audio y selecciona la mejor coincidencia.
+Compares the query with each individual description of each audio and selects the best match.
 
-- **Ventajas**: Alta precisión cuando hay descripciones específicas que coinciden exactamente con la consulta.
-- **Desventajas**: Puede perder coincidencias si la consulta usa sinónimos o frases diferentes.
-- **Uso recomendado**: Cuando las descripciones son muy específicas y variadas.
+- **Advantages**: High precision when there are specific descriptions that exactly match the query.
+- **Disadvantages**: May miss matches if the query uses synonyms or different phrases.
+- **Recommended use**: When descriptions are very specific and varied.
 
-### 2. Combinado (`combined`)
+### 2. Combined (`combined`)
 
-Combina todas las descripciones de cada audio en un solo texto y compara la consulta con este texto combinado.
+Combines all descriptions of each audio into a single text and compares the query with this combined text.
 
-- **Ventajas**: Captura el contexto general de un audio.
-- **Desventajas**: Puede diluir la relevancia de coincidencias específicas.
-- **Uso recomendado**: Cuando las descripciones se complementan entre sí para formar un contexto más amplio.
+- **Advantages**: Captures the general context of an audio.
+- **Disadvantages**: May dilute the relevance of specific matches.
+- **Recommended use**: When descriptions complement each other to form a broader context.
 
-### 3. Híbrido (`hybrid`)
+### 3. Hybrid (`hybrid`)
 
-Combina los resultados de los métodos individual y combinado con pesos de 70% y 30% respectivamente.
+Combines the results of the individual and combined methods with weights of 70% and 30% respectively.
 
-- **Ventajas**: Equilibra la precisión del método individual con el contexto del método combinado.
-- **Desventajas**: Puede ser menos preciso que el método individual en casos muy específicos.
-- **Uso recomendado**: Para uso general, ofrece un buen equilibrio entre precisión y contexto.
+- **Advantages**: Balances the precision of the individual method with the context of the combined method.
+- **Disadvantages**: May be less precise than the individual method in very specific cases.
+- **Recommended use**: For general use, offers a good balance between precision and context.
 
-### 4. Máximo (`max`)
+### 4. Maximum (`max`)
 
-Selecciona el mejor resultado entre los métodos individual y combinado.
+Selects the best result between the individual and combined methods.
 
-- **Ventajas**: Aprovecha lo mejor de ambos métodos.
-- **Desventajas**: Puede ser menos predecible en términos de qué método se utilizará.
-- **Uso recomendado**: Cuando se necesita la máxima confianza posible en la coincidencia.
+- **Advantages**: Takes advantage of the best of both methods.
+- **Disadvantages**: May be less predictable in terms of which method will be used.
+- **Recommended use**: When maximum confidence in the match is needed.
 
-## Endpoints Principales
+## Main Endpoints
 
-- `GET /`: Información básica de la API
-- `POST /api/process`: Procesa una consulta de texto y devuelve el audio más apropiado
-  - Parámetros:
-    - `text`: Texto de la consulta
-    - `method`: Método de matching a utilizar (individual, combined, hybrid, max)
-- `GET /api/health`: Verificación de salud del servicio
-- `GET /api/stats`: Estadísticas del sistema
-- `POST /api/admin/add-audio`: Añade un nuevo audio
-- `POST /api/admin/update-threshold`: Actualiza el umbral de similitud
+- `GET /`: Basic API information
+- `POST /api/process`: Processes a text query and returns the most appropriate audio
+  - Parameters:
+    - `text`: Query text
+    - `method`: Matching method to use (individual, combined, hybrid, max)
+- `GET /api/health`: Service health check
+- `GET /api/stats`: System statistics
+- `POST /api/admin/add-audio`: Adds a new audio
+- `POST /api/admin/update-threshold`: Updates the similarity threshold
 
-## Configuración
+## Configuration
 
-Las configuraciones se pueden modificar en `app/config/settings.py` o a través de variables de entorno:
+Configurations can be modified in `app/config/settings.py` or through environment variables:
 
-- `SIMILARITY_THRESHOLD`: Umbral de similitud (predeterminado: 0.7)
-- `MAX_AUDIO_DESCRIPTIONS`: Número máximo de descripciones por audio (predeterminado: 100)
-- `DEBUG_MODE`: Modo de depuración (predeterminado: false)
-- `PORT`: Puerto del servidor (predeterminado: 8000)
+- `SIMILARITY_THRESHOLD`: Similarity threshold (default: 0.7)
+- `MAX_AUDIO_DESCRIPTIONS`: Maximum number of descriptions per audio (default: 5)
+- `DEBUG_MODE`: Debug mode (default: false)
+- `PORT`: Server port (default: 8000)
 
-## Respuesta de la API
+## API Response
 
-La respuesta de la API incluye:
+The API response includes:
 
 ```json
 {
-  "response": "nombre_del_audio.ogg",
+  "response": "audio_name.ogg",
   "confidence": 0.85,
   "method": "hybrid",
-  "message": "Match encontrado con confianza 0.85 usando método hybrid",
+  "message": "Match found with confidence 0.85 using hybrid method",
   "status": "success"
 }
 ```
 
-En modo de depuración, también se incluyen detalles adicionales como las puntuaciones de todas las coincidencias.
+In debug mode, additional details such as scores for all matches are also included.
